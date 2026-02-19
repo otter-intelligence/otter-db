@@ -1,421 +1,142 @@
-# ============================================================================
-# PROJECT METADATA
-# ============================================================================
-# Reference: https://packaging.python.org/en/latest/specifications/pyproject-toml/
-# TODO: Replace "my_package" with your actual package name (also rename src/my_package/)
+[build-system]
+requires = ["uv_build>=0.9.6,<0.11.0"]
+build-backend = "uv_build"
 
 [project]
-name = "my_package"
-version = "0.0.0"
-description = "A Python project template"
+name = "otter"
+version = "0.0.1"
+description = "Internal library for Otter Intelligence: DB management and modelling [DEV BUILD - NOT FOR PRODUCTION]"
 readme = "README.md"
-requires-python = ">=3.12"
-license = { file = "LICENSE" }
-authors = [
-    { name = "Your Name", email = "you@example.com" },
-]
+requires-python = ">=3.11"
+license = { file = "LICENSE" }  # Reference proprietary LICENSE file
+authors = [{ name = "Otter Intelligence Engineering", email = "info@otterintelligence.nl" }]
 
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
+    "License :: Other/Proprietary License",
     "Development Status :: 2 - Pre-Alpha",
-    # Uncomment for private packages:
-    # "License :: Other/Proprietary License",
-    # "Private :: Do Not Upload",
+    "Private :: Do Not Upload",
 ]
-
 dependencies = [
-    "hsqdelta",
-    "otter",
-    "pandas>=2.2.2",
-    "numpy>=1.26.4",
-    "pyarrow>=22.0.0",
-    "tzdata>=2025.2",
-    
+    "alembic >= 1.7.0,<2.0.0",
+    "sqlalchemy >= 2.0.0,<3.0.0",
+    "psycopg2-binary >= 2.9.0,<3.0.0",
 ]
 
-[project.optional-dependencies]
-# Visualisation
-viz = [
-    "matplotlib>=3.10.7",
-    "seaborn>=0.13.2",
-    "plotly>=6.5.0",
-]
-
-# Machine learning
-ml = [
-    "scikit-learn>=1.7.2",
-    "scipy>=1.16.3",
-    "statsmodels>=0.14.5",
-]
-
-# Jupyter notebooks (for users who want notebook support)
-notebooks = [
-
-    "ipykernel>=7.1.0",
-    "ipywidgets>=8.1.8",
-]
-
-# All extras combined
-# all = ["my_package[viz,ml,notebooks]"]  # Uncomment and replace my_package
 
 [project.urls]
-# "Homepage" = "https://example.com"
-# "Repository" = "https://github.com/org/repo"
-# "Documentation" = "https://docs.example.com"
+"Repository" = "https://github.com/HypersoniqTech/otter-db"  # Private/internal
 
-# Uncomment for CLI entry points:
-# [project.scripts]
-# my-cli = "my_package:main"
-
-
-# ============================================================================
-# BUILD SYSTEM
-# ============================================================================
-# Using UV's native build backend (recommended for pure Python projects)
-# Reference: https://docs.astral.sh/uv/concepts/build-backend/
-
-[build-system]
-requires = ["uv_build>=0.9.15,<0.10"]
-build-backend = "uv_build"
-
-# uv_build auto-discovers src/<package_name>/ by default (src layout)
-# See: https://docs.astral.sh/uv/concepts/build-backend/
-
-
-# ============================================================================
-# DEPENDENCY GROUPS (PEP 735)
-# ============================================================================
-# Reference: https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
 
 [dependency-groups]
 dev = [
-    # Testing
-    "pytest>=8.3",
-    "pytest-cov>=6.0",
-    "pytest-mock>=3.14",
-    "pytest-sugar>=1.0",
-    # Notebook testing
-    "nbval>=0.11",              # Validate notebooks execute
-    "pytest-notebook>=0.10",    # Alternative notebook testing
-    # Linting & Formatting
-    "ruff>=0.11",
-    
-    # Notebook tooling
-    "nbqa>=1.9",                # Run linters on notebooks
-    "nbstripout>=0.8",          # Strip notebook outputs before commit
-    # Type Checking — choose ONE:
-    "basedpyright>=1.29",       # Recommended: fast, excellent editor support
-    # "mypy>=1.15",             # Alternative: mature, widely used
-    # "ty>=0.0.1a25",           # Experimental: Astral's new type checker (alpha)
-    # Utilities
-    "rich>=14.0",
-    "codespell>=2.4",
-    "funlog>=0.2.1",
-    # Jupyter (for development),
-    "ipykernel>=6.29",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-mock>=3.15.1",
+    "ruff>=0.15.1",
+    "ty>=0.0.17",
+    "pre-commit>=4.5.1",
+    "sqlacodegen>=3.2.0",
 ]
-
-# Documentation group (install with: uv sync --group docs)
-#docs = [
-#    "mkdocs-material>=9.6",
-#    "mkdocstrings[python]>=0.29",
-#    "mkdocs-git-revision-date-localized-plugin>=1.4",
-#    "mkdocs-glightbox>=0.5",
-#    "mkdocs-minify-plugin>=0.8",
-#]
-
-
-# ============================================================================
-# UV CONFIGURATION
-# ============================================================================
-# Reference: https://docs.astral.sh/uv/reference/settings/
-
-[tool.uv]
-# Common commands:
-#   uv sync              - Install all dependencies (including dev)
-#   uv sync --group docs - Install with docs group
-#   uv run pytest        - Run tests
-#   uv run ruff check .  - Lint code
-#   uv run ruff format . - Format code
-#   uv build             - Build package distributions
-#   uv publish           - Publish to configured PyPI
-
-# ⚠️ INTERNAL PYPI CONFIGURATION (VPN required)
-# The publish-url ensures `uv publish` targets the internal server.
-# Removing this will cause uv to attempt PUBLIC PyPI upload!
-# publish-url = "http://10.8.0.1:7777/"
-
-# Internal PyPI (primary source for private packages)
-[[tool.uv.index]]
-name = "internal"
-url = "http://10.8.0.1:7777/simple/"
-default = true
-
-# Public PyPI fallback for standard dependencies
-[[tool.uv.index]]
-name = "pypi"
-url = "https://pypi.org/simple/"
-default = false
-
-# Package sources — specify which packages come from internal PyPI
-[tool.uv.sources]
-# Add your internal packages here:
-# my-internal-package = { index = "internal" }
-otter = { index = "internal" }
-hsqdelta = { index = "internal" }
-
-
-# ============================================================================
-# RUFF - LINTER & FORMATTER
-# ============================================================================
-# Reference: https://docs.astral.sh/ruff/
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
-
-# Enable notebook support
-extend-include = ["*.ipynb"]
-
-# Exclude data directories and checkpoints
-extend-exclude = [
-    "data/",
-    ".ipynb_checkpoints/",
+target-version = "py311"  # Matches requires-python
+src = ["src", "tests"]
+exclude = [
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    "__pycache__",
+    "docs",
 ]
 
 [tool.ruff.lint]
+# Enable pycodestyle (E, W), Pyflakes (F), isort (I), and more
 select = [
-    # Core
-    "E",      # pycodestyle errors
-    "W",      # pycodestyle warnings
-    "F",      # pyflakes
-    "I",      # isort (import sorting)
-    "UP",     # pyupgrade (modernise syntax)
-    "B",      # flake8-bugbear
-    "Q",      # flake8-quotes
-    # Recommended extras
-    "C4",     # flake8-comprehensions
-    "FA",     # flake8-future-annotations
-    "ISC",    # implicit string concatenation
-    "ICN",    # import conventions (numpy as np, etc.)
-    "RET",    # return statement improvements
-    "SIM",    # simplifications
-    "TID",    # tidy imports
-    "TC",     # type checking imports
-    "PTH",    # pathlib over os.path
-    "ARG",    # unused arguments
-    "FLY",    # f-string improvements
-    # Data Science specific
-    "NPY",    # NumPy-specific rules
-    "PD",     # pandas-vet (pandas best practices)
-    # Security (recommended for production)
-    "S",      # flake8-bandit (security)
-    # Uncomment for docstring enforcement:
-    # "D",    # pydocstyle
-    # "TD",   # TODO discipline
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
 ]
 
+# Ignore specific rules if needed
 ignore = [
-    "E501",   # Line too long (handled by formatter)
-    "S101",   # Allow assert (common in tests)
-    # pandas-vet rules that are too strict:
-    "PD011",  # Allow .values (sometimes needed)
-    # Formatter conflict rules (always disable when using ruff format):
-    "W191", "E111", "E114", "E117", "D206", "D300",
-    "Q000", "Q001", "Q002", "Q003",
-    "COM812", "COM819", "ISC001", "ISC002",
+    "E501",  # Line too long (handled by formatter)
 ]
 
-# Uncomment for NumPy-style docstrings:
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Docstring configuration (NumPy style)
 pydocstyle = { convention = "numpy" }
-
-[tool.ruff.lint.per-file-ignores]
-# Relax rules for notebooks (they're exploratory)
-"*.ipynb" = [
-    "E402",   # Allow imports not at top (common in notebooks)
-    "F401",   # Allow unused imports (exploration)
-    "F841",   # Allow unused variables
-    "B018",   # Allow "useless" expressions (for display)
-    "T201",   # Allow print statements
-    "ARG",    # Allow unused arguments
-    "D",      # Skip docstrings
-    "S",      # Relax security (notebooks are local)
-    "PTH",    # Allow os.path in notebooks
-]
-# Standard relaxations
-"tests/**/*.py" = ["D", "S101", "ARG"]  # Relax rules in tests
-"scripts/**/*.py" = ["D", "S"]          # Scripts don't need docstrings
-"__init__.py" = ["D104", "F401"]        # Allow re-exports
 
 [tool.ruff.format]
 quote-style = "double"
-line-ending = "auto"
+indent-style = "space"
+# Respect magic trailing commas
+skip-magic-trailing-comma = false
+# Auto-format docstrings
 docstring-code-format = true
-docstring-code-line-length = 88
+docstring-code-line-length = "dynamic"
 
-[tool.ruff.lint.isort]
-known-first-party = ["my_package"]  # TODO: Replace with your package name
-# Common data science third-party imports
-known-third-party = ["pandas", "numpy", "polars", "matplotlib", "seaborn", "sklearn"]
+# ty configuration - Astral's fast type checker (replaces mypy)
+# Docs: https://docs.astral.sh/ty/
+[tool.ty.environment]
+python-version = "3.11"
+root = ["."]
 
-# Enforce import conventions
-[tool.ruff.lint.flake8-import-conventions.aliases]
-numpy = "np"
-pandas = "pd"
-polars = "pl"
-seaborn = "sns"
-matplotlib = "mpl"
-"matplotlib.pyplot" = "plt"
-
-
-# ============================================================================
-# TYPE CHECKING
-# ============================================================================
-# Choose ONE of the following options:
-
-# ----------------------------------------------------------------------------
-# OPTION A: BasedPyright (RECOMMENDED)
-# Faster than mypy, excellent VSCode/Cursor integration
-# Reference: https://docs.basedpyright.com/
-# ----------------------------------------------------------------------------
-[tool.basedpyright]
+[tool.ty.src]
 include = ["src", "tests"]
-exclude = ["notebooks", "data"]
-pythonVersion = "3.12"
-typeCheckingMode = "standard"  # Options: "off", "basic", "standard", "strict", "all"
-# Disable noisy warnings:
-reportIgnoreCommentWithoutRule = false
-reportUnnecessaryTypeIgnoreComment = false
-reportMissingTypeStubs = false
-reportUnusedCallResult = false
-reportAny = false
-reportExplicitAny = false
-reportImplicitStringConcatenation = false
-reportUnreachable = false
-# reportPrivateImportUsage = false
-# reportUnknownVariableType = false
+exclude = ["build", "dist", ".venv", "venv", "htmlcov", "**/__pycache__"]
 
-# ----------------------------------------------------------------------------
-# OPTION B: mypy (mature, widely used)
-# Reference: https://mypy.readthedocs.io/
-# ----------------------------------------------------------------------------
-# [tool.mypy]
-# python_version = "3.12"
-# strict = true
-# warn_return_any = true
-# follow_imports = "silent"
-# files = ["src/", "tests/"]
-# mypy_path = "src"
-#
-# [[tool.mypy.overrides]]
-# module = ["numpy.*", "pandas.*", "matplotlib.*"]
-# ignore_missing_imports = true
+[tool.ty.terminal]
+output-format = "full"
 
-# ----------------------------------------------------------------------------
-# OPTION C: ty (EXPERIMENTAL - Astral's new type checker)
-# ⚠️ Alpha software - NOT for production use
-# Reference: https://docs.astral.sh/ty/
-# ----------------------------------------------------------------------------
-# [tool.ty]
-# # Python version for type checking
-# [tool.ty.environment]
-# python-version = "3.12"
-#
-# [tool.ty.rules]
-# # Adjust rule severity: "ignore", "warn", "error"
-# # possibly-unresolved-reference = "warn"
-# # division-by-zero = "error"
-#
-# [tool.ty.src]
-# include = ["src", "tests"]
-# # exclude = ["build", "dist"]
-
-
-# ============================================================================
-# PYTEST
-# ============================================================================
-# Reference: https://docs.pytest.org/en/stable/reference/customize.html
-
+# Pytest configuration
 [tool.pytest.ini_options]
-minversion = "8.0"
 testpaths = ["tests"]
-python_files = ["test_*.py"]
+python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = [
-    "-ra",
-    "--strict-markers",
-    "--strict-config",
-    "--cov=src",
+    "--cov=app",
     "--cov-report=term-missing",
     "--cov-report=html",
-    "--cov-report=xml",
+    "--strict-markers",
 ]
-filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning",
-]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks integration tests",
-    "notebook: marks notebook tests",
-]
-
-# Notebook testing configuration
-# Run with: uv run pytest --nbval notebooks/
-norecursedirs = [
-    ".ipynb_checkpoints",
-    "data",
-]
-
-
-# ============================================================================
-# COVERAGE
-# ============================================================================
 
 [tool.coverage.run]
 source = ["src"]
-branch = true
-parallel = true
-omit = ["*/tests/*", "*/__init__.py", "*/notebooks/*"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+]
 
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
-    "if TYPE_CHECKING:",
-    "if __name__ == .__main__.:",
-    "@abstractmethod",
-    "@overload",
+    "def __repr__",
+    "raise AssertionError",
     "raise NotImplementedError",
-]
-fail_under = 80
-show_missing = true
-
-
-# ============================================================================
-# CODESPELL
-# ============================================================================
-
-[tool.codespell]
-skip = ".git,*.lock,*.min.js,dist,build,.venv,htmlcov,data,*.ipynb"
-# ignore-words-list = "word1,word2"
-
-
-# ============================================================================
-# NBSTRIPOUT - Strip notebook outputs before commit
-# ============================================================================
-# Setup: uv run nbstripout --install --attributes .gitattributes
-
-[tool.nbstripout]
-keep_output = false
-keep_count = false
-extra_keys = [
-    "metadata.kernelspec",
-    "metadata.language_info.version",
-    "cell.metadata.pycharm",
+    "if __name__ == .__main__.:",
 ]
