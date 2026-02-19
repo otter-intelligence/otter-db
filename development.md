@@ -1,0 +1,124 @@
+# Development
+
+## Setting Up uv
+
+This project is set up to use [uv](https://docs.astral.sh/uv/) to manage Python and
+dependencies. First, be sure you
+[have uv installed](https://docs.astral.sh/uv/getting-started/installation/).
+
+Then [fork the HypersoniqTech/uv-repo-template
+repo](https://github.com/HypersoniqTech/uv-repo-template/fork) (having your own
+fork will make it easier to contribute) and
+[clone it](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository).
+
+## Basic Developer Workflows
+
+The `Makefile` and `justfile` offer shortcuts to `uv` commands for developer convenience.
+Use whichever you prefer—`just` works better on Windows, while `make` is more universal on Unix.
+(For clarity, GitHub Actions don't use either and just call `uv` directly.)
+
+```shell
+# First, install all dependencies and set up your virtual environment.
+# This simply runs `uv sync --all-extras` to install all packages,
+# including dev dependencies and optional dependencies.
+make install    # or: just install    # or: just install
+
+# Install core deps only (no extras):
+just install-minimal
+
+# Run agent-rules, install, lint, and test:
+make            # or: just (lists commands)
+
+# Linting:
+make lint       # or: just lint
+
+# Run tests:
+make test       # or: just test
+
+# Build the package:
+make build      # or: just build
+
+# Delete all the build artifacts:
+make clean      # or: just clean
+
+# Upgrade dependencies to compatible versions:
+make upgrade    # or: just upgrade
+
+# Show environment info:
+make info       # or: just info
+
+# To run tests by hand:
+uv run pytest   # all tests
+uv run pytest -s src/module/some_file.py  # one test, showing outputs
+
+# Build and install current dev executables, to let you use your dev copies
+# as local tools:
+uv tool install --editable .
+
+# Dependency management directly with uv:
+# Add a new dependency:
+uv add package_name
+# Add a development dependency:
+uv add --dev package_name
+# Update to latest compatible versions (including dependencies on git repos):
+uv sync --upgrade
+# Update a specific package:
+uv lock --upgrade-package package_name
+# Update dependencies on a package:
+uv add package_name@latest
+
+# Run a shell within the Python environment:
+uv venv
+source .venv/bin/activate
+```
+
+## Using `just` and `uv` (Cross-platform notes)
+
+This repository uses `uv` to manage Python toolchains and dependencies. The `justfile` is configured to run Python scripts with `uv` by default, which ensures consistent environments across contributors.
+
+- `PY` variable: by default, recipes run with `uv run python` so that scripts run inside the project-managed venv. You can override the `PY` variable if you prefer your system interpreter:
+  - `just --set PY=python lint`  # runs lint with system `python`
+
+- `SYSTEM_PY` variable: some tasks, like `clean`, intentionally run with the system Python rather than `uv` so they can safely delete the `.venv` folder (i.e., so the process that runs the deletion isn't in the venv itself). You can override it:
+  - `just --set SYSTEM_PY=python clean`
+
+- `pre-clean`: a confirmation wrapper around `clean`. Use this to avoid accidental deletion of `.venv`:
+  - `just pre-clean` (requires interactive confirmation unless `--yes` is used)
+
+If you're on Windows and prefer to use PowerShell for `just` recipes, pass `--shell pwsh` on the command line or set your `JUST_SHELL` environment variable. The justfile defaults to `sh` on Unix-like systems and prefers `pwsh` on Windows via `set windows-shell`.
+
+
+See [uv docs](https://docs.astral.sh/uv/) for details.
+
+## Agent Rules
+
+See [.cursor/rules](.cursor/rules) for agent rules.
+These are written for [Cursor](https://www.cursor.com/) but are also used by other
+agents because the Makefile will generate `CLAUDE.md` and `AGENTS.md` from the same
+rules.
+
+```shell
+make agent-rules
+```
+
+## IDE setup
+
+If you use VSCode or a fork like Cursor or Windsurf, you can install the following
+extensions:
+
+- [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
+
+- [Based Pyright](https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright)
+  for type checking. Note that this extension works with non-Microsoft VSCode forks like
+  Cursor.
+
+## Documentation
+
+- [uv docs](https://docs.astral.sh/uv/)
+
+- [basedpyright docs](https://docs.basedpyright.com/latest/)
+
+* * *
+
+*This file was built with
+[simple-modern-uv](https://github.com/jlevy/simple-modern-uv).*

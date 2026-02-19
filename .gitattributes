@@ -1,0 +1,52 @@
+# ============================================================================
+# NBSTRIPOUT - Automatically strip notebook outputs on commit
+# ============================================================================
+# Setup: uv run nbstripout --install --attributes .gitattributes
+
+*.ipynb filter=nbstripout
+*.ipynb diff=ipynb
+
+
+# ============================================================================
+# LINE ENDINGS
+# ============================================================================
+
+* text=auto eol=lf
+
+# Windows-specific files
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+*.tar binary
+*.7z binary
+*.parquet binary
+*.feather binary
+*.arrow binary
+*.pkl binary
+*.pickle binary
+*.h5 binary
+*.hdf5 binary
+*.npy binary
+*.npz binary
+*.pt binary
+*.pth binary
+
+
+# ============================================================================
+# GITHUB LINGUIST
+# ============================================================================
+
+# Exclude notebooks from language statistics (optional)
+# *.ipynb linguist-vendored
+
+# Mark generated files
+uv.lock linguist-generated=true
