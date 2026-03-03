@@ -165,11 +165,11 @@ data/external/*
 # MACHINE LEARNING
 # ============================================================================
 
-# Model outputs
-models/
-checkpoints/
-runs/
-outputs/
+# Model outputs (ML artifacts only, not source code)
+/models/
+/checkpoints/
+/runs/
+/outputs/
 
 # MLflow
 mlruns/
