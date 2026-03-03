@@ -25,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "alembic >= 1.7.0,<2.0.0",
+    "alembic-postgresql-enum >= 1.10.0,<2.0.0",
     "sqlalchemy >= 2.0.0,<3.0.0",
     "psycopg2-binary >= 2.9.0,<3.0.0",
 ]
@@ -48,7 +49,7 @@ dev = [
 [tool.ruff]
 line-length = 88
 target-version = "py311"  # Matches requires-python
-src = ["./src/*", "./tests/*"]
+include = ["src/**", "tests/**", "scripts/**", "alembic/env.py"]
 exclude = [
     ".eggs",
     ".git",
@@ -80,7 +81,7 @@ select = [
 # Ignore specific rules if needed
 ignore = [
     "E501",  # Line too long (handled by formatter)
-    "N815", # Variable in function should be lowercase (allow for some column names)
+    "N815", # Mixed case variable in class scope (allow for some column names)
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -97,7 +98,7 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 # Auto-format docstrings
 docstring-code-format = true
-docstring-code-line-length = "dynamic"
+docstring-code-line-length = 88
 
 # ty configuration - Astral's fast type checker (replaces mypy)
 # Docs: https://docs.astral.sh/ty/
