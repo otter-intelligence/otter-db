@@ -1,9 +1,10 @@
 import argparse
 import logging
 
-from sqlalchemy import create_engine, delete, text, update
+from sqlalchemy import create_engine, delete, update
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
+from sqlalchemy.schema import CreateSchema, DropSchema
 
 from otter_db.models import Base, Tenant
 
@@ -33,7 +34,7 @@ def provision_tenant(name: str, schema_name: str, db_url: str):
     engine = get_engine(db_url)
     with Session(engine) as session, session.begin():
         session.add(Tenant(name=name, schema_name=schema_name))
-        session.execute(text(f"CREATE SCHEMA {schema_name}"))
+        session.execute(CreateSchema(schema_name))
 
     logger.info(
         f"Tenant '{name}' provisioned at schema '{schema_name}'. Run migrations separately."
@@ -58,7 +59,7 @@ def deprovision_tenant(
     engine = get_engine(db_url)
     with Session(engine) as session, session.begin():
         if hard_delete:
-            session.execute(text(f"DROP SCHEMA {schema_name} CASCADE"))
+            session.execute(DropSchema(schema_name, cascade=True))
             session.execute(delete(Tenant).where(Tenant.schema_name == schema_name))
             logger.info(f"Tenant '{schema_name}' permanently deleted.")
         else:

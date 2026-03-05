@@ -28,6 +28,7 @@ dependencies = [
     "alembic-postgresql-enum >= 1.10.0,<2.0.0",
     "sqlalchemy >= 2.0.0,<3.0.0",
     "psycopg2-binary >= 2.9.0,<3.0.0",
+    "python-dotenv>=1.2.2",
 ]
 
 
@@ -49,6 +50,7 @@ dev = [
 [tool.ruff]
 line-length = 88
 target-version = "py311"  # Matches requires-python
+src = ["src"]
 include = ["src/**", "tests/**", "scripts/**", "alembic/env.py"]
 exclude = [
     ".eggs",

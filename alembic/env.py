@@ -3,16 +3,20 @@ import os
 from logging.config import fileConfig
 
 import alembic_postgresql_enum  # noqa: F401 - needs to be imported to register the enum type with Alembic
+import dotenv
+from alembic import context
 from sqlalchemy import create_engine, pool, text
 
-from alembic import context
 from otter_db.models import Base
 
-DB_NAME = os.getenv("POSTGRES_DB", "mydb")
-DB_USER = os.getenv("POSTGRES_USER", "myuser")
-DB_PASSWORD = os.getenv("POSTGRES_PASSWORD", "mypassword")
-DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
-DB_PORT = os.getenv("POSTGRES_PORT", "5432")
+# load environment variables from .env file
+dotenv.load_dotenv()
+
+DB_NAME = os.getenv("POSTGRES_DB")
+DB_USER = os.getenv("POSTGRES_USER")
+DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+DB_HOST = os.getenv("POSTGRES_HOST")
+DB_PORT = os.getenv("POSTGRES_PORT")
 DB_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 # The list of tables to exclude from migrations. These are managed separately and should not be altered by migrations.
 EXCLUDE_TABLES = {"tenants", "alembic_version"}
@@ -51,7 +55,9 @@ def get_tenant_schemas(connection) -> list[str]:
 
 def run_migrations_for_schema(connection, schema_name):
     """Run pending migrations for one tenant schema."""
-    connection.execute(text(f"SET search_path TO {schema_name}"))
+    preparer = connection.dialect.identifier_preparer
+    safe_schema = preparer.quote(schema_name)
+    connection.execute(text(f"SET search_path TO {safe_schema}"))
     # SQLAlchemy 2.x requires an explicit commit after SET search_path
     connection.commit()
 

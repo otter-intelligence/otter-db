@@ -35,5 +35,5 @@ class Comment(Base):
     )
     sensor_id: Mapped[str | None] = mapped_column(String(255))
     warning_level: Mapped[WarningLevelEnum | None] = mapped_column(
-        ENUM("info", "warning", "critical", name="warning_level_enum")
+        ENUM(WarningLevelEnum, name="warning_level_enum")
     )
