@@ -16,7 +16,7 @@ db_host := env("POSTGRES_HOST", "localhost")
 db_port := env("POSTGRES_PORT", "5432")
 db_url := "postgresql+psycopg2://" + db_user + ":" + db_password + "@" + db_host + ":" + db_port + "/" + db_name
 
-default_tenant := "Aquaworks"
+default_tenant := "tenant_aquaworks"
 
 [doc("First time use: create the tenant table in the public schema")]
 create-tenants-table:
@@ -51,3 +51,17 @@ alembic-revision message:
 [doc("Upgrade every tenant to the latest revision.")]
 alembic-upgrade:
     uv run alembic upgrade head
+
+# ==========================================================
+# Linting, Formatting, and Type Checking
+# ==========================================================
+lint:
+    uv run ruff check --fix
+
+format:
+    uv run ruff format
+
+typecheck:
+    uv run ty check
+
+lint-all: lint format typecheck

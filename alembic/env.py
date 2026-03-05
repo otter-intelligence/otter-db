@@ -1,11 +1,21 @@
 import logging
+import os
 from logging.config import fileConfig
 
 import alembic_postgresql_enum  # noqa: F401 - needs to be imported to register the enum type with Alembic
-from sqlalchemy import engine_from_config, pool, text
+from sqlalchemy import create_engine, pool, text
 
 from alembic import context
 from otter_db.models import Base
+
+DB_NAME = os.getenv("POSTGRES_DB", "mydb")
+DB_USER = os.getenv("POSTGRES_USER", "myuser")
+DB_PASSWORD = os.getenv("POSTGRES_PASSWORD", "mypassword")
+DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
+DB_PORT = os.getenv("POSTGRES_PORT", "5432")
+DB_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+# The list of tables to exclude from migrations. These are managed separately and should not be altered by migrations.
+EXCLUDE_TABLES = {"tenants", "alembic_version"}
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,17 +31,14 @@ logger = logging.getLogger("alembic.env")
 # for 'autogenerate' support
 target_metadata = Base.metadata
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
-# The list of tables to exclude from migrations. These are managed separately and should not be altered by migrations.
-EXCLUDE_TABLES = {"tenants", "alembic_version"}
-
 
 def include_object(object, name, type_, reflected, compare_to):
-    return not (type_ == "table" and name in EXCLUDE_TABLES)
+    """Exclude certain tables and schemas from migrations."""
+    if type_ == "table" and name in EXCLUDE_TABLES:
+        return False
+    if type_ == "schema":
+        return name != "public"
+    return True
 
 
 def get_tenant_schemas(connection) -> list[str]:
@@ -62,13 +69,9 @@ def run_migrations_for_schema(connection, schema_name):
 
 
 def run_migrations_online():
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    engine = create_engine(DB_URL, poolclass=pool.NullPool)
 
-    with connectable.connect() as connection:
+    with engine.connect() as connection:
         tenant_arg = context.get_x_argument(as_dictionary=True).get("tenant")
 
         schemas = [tenant_arg] if tenant_arg else get_tenant_schemas(connection)

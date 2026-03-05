@@ -107,7 +107,7 @@ python-version = "3.11"
 root = ["."]
 
 [tool.ty.src]
-include = ["src", "tests"]
+include = ["src", "tests", "alembic/env.py"]
 exclude = ["build", "dist", ".venv", "venv", "htmlcov", "**/__pycache__"]
 
 [tool.ty.terminal]

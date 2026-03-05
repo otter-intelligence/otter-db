@@ -92,7 +92,7 @@ src/
       __init__.py      # re-exports Base and all models
       base.py          # DeclarativeBase + Tenant registry model
       ...
-alembic.ini           # Alembic config (DB connection, etc.)
+alembic.ini           # Alembic config
 justfile              # Just commands for common tasks
 pyproject.toml        # Python dependencies and project config
 ```
